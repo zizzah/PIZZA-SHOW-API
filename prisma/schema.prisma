@@ -1,0 +1,93 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  orders    Order[]
+
+  @@map("User")
+}
+
+model Topping {
+  id            String             @id @default(cuid())
+  name          String
+  isExtraCharge Boolean
+  orderItems    OrderItemTopping[]
+
+  @@map("Topping")
+}
+
+model Size {
+  id        String       @id @default(cuid())
+  name      String
+  pizzas    PizzaPrice[]
+  orderItem OrderItem[]
+
+  @@map("Size")
+}
+
+model Pizza {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  prices      PizzaPrice[]
+  orderItems  OrderItem[]
+
+  @@map("Pizza")
+}
+
+model PizzaPrice {
+  id      String @id @default(cuid())
+  pizza   Pizza  @relation(fields: [pizzaId], references: [id])
+  pizzaId String
+  size    Size   @relation(fields: [sizeId], references: [id])
+  sizeId  String
+  price   Float
+
+  @@map("PizzaPrice")
+}
+
+model Order {
+  id        String    @id @default(cuid())
+  status    String    @default("PENDING")
+  createdAt DateTime  @default(now())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+
+  @@map("Order")
+}
+
+model OrderItem {
+  id        String    @id @default(cuid())
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderId   String
+  pizza     Pizza     @relation(fields: [pizzaId], references: [id])
+  pizzaId   String
+  size      Size      @relation(fields: [sizeId], references: [id])
+  sizeId    String
+  toppings  OrderItemTopping[]
+
+  @@map("OrderItem")
+}
+
+model OrderItemTopping {
+  id         String    @id @default(cuid())
+  orderItem  OrderItem @relation(fields: [orderItemId], references: [id])
+  orderItemId String
+  topping    Topping   @relation(fields: [toppingId], references: [id])
+  toppingId  String
+
+  @@map("OrderItemTopping")
+}
