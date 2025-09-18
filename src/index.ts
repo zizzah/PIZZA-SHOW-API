@@ -40,9 +40,17 @@ app.get("/db-test", async (req, res) => {
 app.use("/api", routes);
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api`);
-});
+
+// For Vercel deployment
+if (process.env.NODE_ENV === 'production') {
+  // Export the app for Vercel
+  module.exports = app;
+} else {
+  // Start server for local development
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📚 API Documentation: http://localhost:${PORT}/api`);
+  });
+}
 
 
