@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import prisma from "./config/prisma";
-import routes from "./routes";
+import prisma from "../src/config/prisma";
+import routes from "../src/routes";
 
 dotenv.config();
 
@@ -39,16 +39,4 @@ app.get("/db-test", async (req, res) => {
 // API routes
 app.use("/api", routes);
 
-// Export for Vercel
 export default app;
-
-// Start server for local development
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 4000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📚 API Documentation: http://localhost:${PORT}/api`);
-  });
-}
-
-
